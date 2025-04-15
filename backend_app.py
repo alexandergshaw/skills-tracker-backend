@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from collections import Counter
 
-# Sample data (can be reused or replaced later)
+# Static skill and project data
 skills = [
     {"name": "Python", "experience": 3},
     {"name": "Flask", "experience": 2},
@@ -22,6 +22,7 @@ projects = [
     {"title": "API Data Visualizer", "tech": "Python, API, JavaScript"}
 ]
 
+# App factory pattern
 def create_app():
     app = Flask(__name__)
 
@@ -58,17 +59,17 @@ def create_app():
 
     @app.route('/api/unused-skills')
     def get_unused_skills():
-        used_skills = set()
+        used = set()
         for project in projects:
             for skill in skills:
                 if skill["name"].lower() in project["tech"].lower():
-                    used_skills.add(skill["name"])
-        unused = [skill for skill in skills if skill["name"] not in used_skills]
+                    used.add(skill["name"])
+        unused = [skill for skill in skills if skill["name"] not in used]
         return jsonify(unused)
 
     return app
 
-# For running locally or on Render
+# Only run server when executed directly
 if __name__ == '__main__':
     import os
     app = create_app()
