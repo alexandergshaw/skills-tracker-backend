@@ -1,9 +1,7 @@
 from flask import Flask, jsonify
 from collections import Counter
 
-app = Flask(__name__)
-
-# Sample data
+# Sample data (can be reused or replaced later)
 skills = [
     {"name": "Python", "experience": 3},
     {"name": "Flask", "experience": 2},
@@ -24,48 +22,55 @@ projects = [
     {"title": "API Data Visualizer", "tech": "Python, API, JavaScript"}
 ]
 
-@app.route('/')
-def welcome():
-    return jsonify(message="Welcome to the Skills Tracker Backend API!")
+def create_app():
+    app = Flask(__name__)
 
-@app.route('/api/skills')
-def get_skills():
-    return jsonify(skills)
+    @app.route('/')
+    def welcome():
+        return jsonify(message="Welcome to the Skills Tracker Backend API!")
 
-@app.route('/api/projects')
-def get_projects():
-    return jsonify(projects)
+    @app.route('/api/skills')
+    def get_skills():
+        return jsonify(skills)
 
-@app.route('/api/skill-usage')
-def get_skill_usage():
-    usage_count = Counter()
-    for project in projects:
-        for skill in skills:
-            if skill["name"].lower() in project["tech"].lower():
-                usage_count[skill["name"]] += 1
-    return jsonify(dict(usage_count))
+    @app.route('/api/projects')
+    def get_projects():
+        return jsonify(projects)
 
-@app.route('/api/top-skills')
-def get_top_skills():
-    usage_count = Counter()
-    for project in projects:
-        for skill in skills:
-            if skill["name"].lower() in project["tech"].lower():
-                usage_count[skill["name"]] += 1
-    top_skills = usage_count.most_common(3)
-    return jsonify(top_skills)
+    @app.route('/api/skill-usage')
+    def get_skill_usage():
+        usage_count = Counter()
+        for project in projects:
+            for skill in skills:
+                if skill["name"].lower() in project["tech"].lower():
+                    usage_count[skill["name"]] += 1
+        return jsonify(dict(usage_count))
 
-@app.route('/api/unused-skills')
-def get_unused_skills():
-    used_skills = set()
-    for project in projects:
-        for skill in skills:
-            if skill["name"].lower() in project["tech"].lower():
-                used_skills.add(skill["name"])
-    unused = [skill for skill in skills if skill["name"] not in used_skills]
-    return jsonify(unused)
+    @app.route('/api/top-skills')
+    def get_top_skills():
+        usage_count = Counter()
+        for project in projects:
+            for skill in skills:
+                if skill["name"].lower() in project["tech"].lower():
+                    usage_count[skill["name"]] += 1
+        top_skills = usage_count.most_common(3)
+        return jsonify(top_skills)
 
+    @app.route('/api/unused-skills')
+    def get_unused_skills():
+        used_skills = set()
+        for project in projects:
+            for skill in skills:
+                if skill["name"].lower() in project["tech"].lower():
+                    used_skills.add(skill["name"])
+        unused = [skill for skill in skills if skill["name"] not in used_skills]
+        return jsonify(unused)
+
+    return app
+
+# For running locally or on Render
 if __name__ == '__main__':
     import os
+    app = create_app()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
