@@ -1,10 +1,15 @@
-name: Run Full Test Suite with Reports
+name: Run Full Test Suite
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
 
 jobs:
   test:
@@ -24,25 +29,25 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Unit + Integration Tests
+    - name: Run unit and integration tests
       run: |
-        echo "Running unit + integration tests..."
+        echo "Running unit and integration tests"
         export PYTHONPATH=.
         pytest -v \
           tests/test_backend_app.py \
           tests/integration/ \
           --junitxml=test-results/unit-integration.xml
 
-    - name: Run System Tests
+    - name: Run system tests
       run: |
-        echo "Running system tests..."
+        echo "Running system tests"
         export PYTHONPATH=.
         pytest -v tests/system/ \
           --junitxml=test-results/system.xml
 
-    - name: Run System Integration Tests
+    - name: Run system integration tests
       run: |
-        echo "Running system integration tests..."
+        echo "Running system integration tests"
         export PYTHONPATH=.
         pytest -v tests/system_integration/ \
           --junitxml=test-results/system-integration.xml
@@ -53,9 +58,9 @@ jobs:
         name: junit-test-reports
         path: test-results/
 
-    - name: Run All Tests with Coverage Summary
+    - name: Generate local coverage report
       run: |
-        echo "Generating coverage report..."
+        echo "Generating code coverage"
         export PYTHONPATH=.
         pytest --cov=backend_app --cov-report=term --cov-report=xml
 
