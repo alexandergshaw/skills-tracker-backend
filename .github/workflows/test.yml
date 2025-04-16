@@ -48,7 +48,7 @@ jobs:
           --junitxml=test-results/system-integration.xml
 
     - name: Upload test result reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: junit-test-reports
         path: test-results/
@@ -60,7 +60,7 @@ jobs:
         pytest --cov=backend_app --cov-report=term --cov-report=xml
 
     - name: Upload coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: coverage-report
         path: coverage.xml
