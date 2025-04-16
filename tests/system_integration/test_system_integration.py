@@ -39,6 +39,17 @@ def test_top_skills_and_skill_usage_are_consistent():
     top = top_res.json()
     usage = usage_res.json()
 
+    # Get the top 3 by usage count (as list of lists)
+    sorted_usage = sorted(usage.items(), key=lambda x: x[1], reverse=True)[:3]
+    sorted_usage_as_lists = [list(item) for item in sorted_usage]
+
+    assert set(tuple(skill) for skill in top) == set(tuple(skill) for skill in sorted_usage_as_lists)
+    top_res = requests.get(f"{BASE_URL}/api/top-skills")
+    usage_res = requests.get(f"{BASE_URL}/api/skill-usage")
+
+    top = top_res.json()
+    usage = usage_res.json()
+
     sorted_usage = sorted(usage.items(), key=lambda x: x[1], reverse=True)[:3]
     sorted_usage_as_lists = [list(item) for item in sorted_usage]
 
