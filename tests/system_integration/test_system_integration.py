@@ -40,7 +40,9 @@ def test_top_skills_and_skill_usage_are_consistent():
     usage = usage_res.json()
 
     sorted_usage = sorted(usage.items(), key=lambda x: x[1], reverse=True)[:3]
-    assert top == sorted_usage
+    sorted_usage_as_lists = [list(item) for item in sorted_usage]
+
+    assert top == sorted_usage_as_lists
 
 def test_unused_skills_not_in_usage():
     unused_res = requests.get(f"{BASE_URL}/api/unused-skills")
