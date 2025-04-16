@@ -1,4 +1,4 @@
-name: Run Flask Backend Tests
+name: Run Full Test Suite with Reports
 
 on:
   push:
@@ -24,20 +24,43 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run unit and integration tests
+    - name: Run Unit + Integration Tests
       run: |
         echo "Running unit + integration tests..."
         export PYTHONPATH=.
-        pytest -v tests/test_backend_app.py tests/integration/
+        pytest -v \
+          tests/test_backend_app.py \
+          tests/integration/ \
+          --junitxml=test-results/unit-integration.xml
 
-    - name: Run system tests
+    - name: Run System Tests
       run: |
         echo "Running system tests..."
         export PYTHONPATH=.
-        pytest -v tests/system/
+        pytest -v tests/system/ \
+          --junitxml=test-results/system.xml
 
-    - name: Run system integration tests
+    - name: Run System Integration Tests
       run: |
         echo "Running system integration tests..."
         export PYTHONPATH=.
-        pytest -v tests/system_integration/
+        pytest -v tests/system_integration/ \
+          --junitxml=test-results/system-integration.xml
+
+    - name: Upload test result reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: junit-test-reports
+        path: test-results/
+
+    - name: Run All Tests with Coverage Summary
+      run: |
+        echo "Generating coverage report..."
+        export PYTHONPATH=.
+        pytest --cov=backend_app --cov-report=term --cov-report=xml
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage.xml
